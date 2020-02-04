@@ -15,15 +15,16 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 db = SQLAlchemy(app)
 
+
 class Rule(db.Model):
     title = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
 
     def __repr__(self):
         return "<Title: {}>".format(self.title)
 
+
 @app.route('/', methods=["GET", "POST"])
 def home():
-    rules = None
     if request.form:
         try:
             rule = Rule(title=request.form.get("title"))
@@ -34,6 +35,7 @@ def home():
             print(e)
     rules = Rule.query.all()
     return render_template("home.html", rules=rules)
+
 
 @app.route("/update", methods=["POST"])
 def update():
@@ -48,6 +50,7 @@ def update():
         print(e)
     return redirect("/")
 
+
 @app.route("/delete", methods=["POST"])
 def delete():
     title = request.form.get("title")
@@ -56,8 +59,7 @@ def delete():
     db.session.commit()
     return redirect("/")
 
+
 if __name__ == "__main__":
-    # from rulemanager import db
     db.create_all()
-    # exit()
     app.run(debug=True)
